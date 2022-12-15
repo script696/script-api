@@ -13,7 +13,9 @@ import { ConfigModule } from '@nestjs/config';
   imports: [
     ServeStaticModule.forRoot({ rootPath: path.resolve(__dirname, 'static') }),
     MongooseModule.forRoot('mongodb://localhost:27017/script-api'),
-    ConfigModule.forRoot(),
+    ConfigModule.forRoot({
+      isGlobal: true,
+    }),
     TokenModule,
     UserModule,
     TrackModule,
