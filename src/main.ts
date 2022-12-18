@@ -1,6 +1,7 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { CORS_CONFIG } from './utils/constants';
+import * as cookieParser from 'cookie-parser';
 
 const start = async () => {
   try {
@@ -8,6 +9,8 @@ const start = async () => {
     const app = await NestFactory.create(AppModule);
 
     app.enableCors(CORS_CONFIG);
+
+    app.use(cookieParser());
 
     await app.listen(PORT, () => console.log(`server start on PORT ${PORT}`));
   } catch (e) {

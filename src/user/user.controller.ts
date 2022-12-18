@@ -1,6 +1,7 @@
-import { Controller, Get, UseGuards } from '@nestjs/common';
+import { Controller, Get, Req, UseGuards } from '@nestjs/common';
 import { UserService } from './user.service';
 import { JwtAuthGuard } from '../guards/jwt-auth.guard';
+import { Request } from 'express';
 
 @Controller('/users')
 export class UserController {
@@ -8,7 +9,8 @@ export class UserController {
 
   @UseGuards(JwtAuthGuard)
   @Get('/all')
-  async getAllUsers() {
+  async getAllUsers(@Req() request: Request) {
+    console.log(request.cookies);
     return await this.userService.getAllUsers();
   }
 }

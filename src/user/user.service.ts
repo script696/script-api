@@ -7,10 +7,11 @@ import * as bcrypt from 'bcrypt';
 @Injectable()
 export class UserService {
   constructor(
-    @InjectModel(User.name) private userModel: Model<UserDocument>,
-  ) // private jwtService: JwtService,
-  // private configService: ConfigService,
-  {}
+    @InjectModel(User.name) private userModel: Model<UserDocument>, // private jwtService: JwtService, // private configService: ConfigService,
+  ) {}
+  async updateUser(id, data) {
+    await this.userModel.findByIdAndUpdate(id, data);
+  }
 
   async getAllUsers() {
     const allUsers = await this.userModel.find();

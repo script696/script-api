@@ -16,19 +16,16 @@ export class AuthService {
     const user = await this.userService.getUserByEmail(email);
     const isPasswordsEqual = await bcrypt.compare(password, user.password);
     if (user && isPasswordsEqual) {
-      const { username, email } = user;
-      return { username, email };
+      const { username, email, _id } = user;
+      return { username, email, id: _id };
     }
     return null;
   }
 
   async login(user: any) {
-    const payload = { email: user.email, sub: user.userId };
-    const tokens = await this.tokenService.getTokens(user.userId, user.email);
+    const payload = { email: user.email, sub: user.id };
+    const tokens = await this.tokenService.getTokens(payload);
 
-    console.log(tokens);
-    return {
-      accessToken: this.jwtService.sign(payload),
-    };
+    return tokens;
   }
 }
