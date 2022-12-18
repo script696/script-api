@@ -17,11 +17,8 @@ export class User {
   @Prop({ required: true })
   role: string;
 
-  @Prop({ default: false })
-  isActive: boolean;
-
   @Prop()
-  activationLink: string;
+  refreshToken: string;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);
