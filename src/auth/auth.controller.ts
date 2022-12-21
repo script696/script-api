@@ -1,7 +1,18 @@
-import { Body, Controller, Post, Request, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Post,
+  Request,
+  Res,
+  UseGuards,
+} from '@nestjs/common';
 import { LocalAuthGuard } from '../guards/local-auth-guard';
 import { AuthService } from './auth.service';
 import { UserService } from '../user/user.service';
+import { Response } from 'express';
+import { RefreshTokenGuard } from '../guards/refreshToken.guard';
+import { COOKIE_CONFIG, REFRESH_TOKEN } from './constants';
 
 @Controller('/auth')
 export class AuthController {
@@ -11,27 +22,49 @@ export class AuthController {
   ) {}
 
   @Post('/signup')
-  async registration(@Body() body) {
-    return await this.userService.register(body);
+  async registration(
+    @Body() body,
+    @Res({ passthrough: true }) response: Response,
+  ) {
+    const user = await this.userService.register(body);
+
+    const { accessToken, refreshToken } = await this.authService.login(user);
+
+    response.cookie(REFRESH_TOKEN, refreshToken, COOKIE_CONFIG);
+
+    return { accessToken };
   }
 
   @UseGuards(LocalAuthGuard)
   @Post('/signin')
-  login(@Request() req) {
-    return this.authService.login(req.user);
+  async login(@Request() req, @Res({ passthrough: true }) response: Response) {
+    const { accessToken, refreshToken } = await this.authService.login(
+      req.user,
+    );
+
+    response.cookie(REFRESH_TOKEN, refreshToken, COOKIE_CONFIG);
+
+    return { accessToken };
   }
 
-  @Post('/signout')
-  logout() {
-    return;
+  @UseGuards(RefreshTokenGuard)
+  @Get('/refresh')
+  async refresh(
+    @Request() req,
+    @Res({ passthrough: true }) response: Response,
+  ) {
+    const { accessToken, refreshToken } = await this.authService.refresh(
+      req.user,
+    );
+
+    response.cookie(REFRESH_TOKEN, refreshToken, COOKIE_CONFIG);
+
+    return { accessToken };
   }
 
-  @Post('/activate/:link')
-  activation() {
-    return;
-  }
-  @Post('/refresh')
-  refresh() {
-    return;
+  @Get('/signout')
+  logout(@Res({ passthrough: true }) response: Response) {
+    response.clearCookie(REFRESH_TOKEN);
+    return { response: 'Success logout' };
   }
 }

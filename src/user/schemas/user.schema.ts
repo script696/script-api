@@ -13,15 +13,6 @@ export class User {
 
   @Prop({ required: true, unique: true })
   email: string;
-
-  @Prop({ required: true })
-  role: string;
-
-  @Prop({ default: false })
-  isActive: boolean;
-
-  @Prop()
-  activationLink: string;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);
