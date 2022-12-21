@@ -9,7 +9,7 @@ export class AuthService {
   constructor(
     private userService: UserService,
     private jwtService: JwtService,
-    private tokenService: TokenService, // private tokenService: TokenService,
+    private tokenService: TokenService,
   ) {}
 
   async validateUser(email: string, password: string): Promise<any> {
@@ -26,6 +26,14 @@ export class AuthService {
     const payload = { email: user.email, sub: user.id };
     const tokens = await this.tokenService.getTokens(payload);
 
+    return tokens;
+  }
+
+  async refresh(payload) {
+    const tokens = await this.tokenService.getTokens({
+      email: payload.email,
+      sub: payload.sub,
+    });
     return tokens;
   }
 }

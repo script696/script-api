@@ -10,7 +10,7 @@ const start = async () => {
 
     app.enableCors(CORS_CONFIG);
 
-    app.use(cookieParser());
+    app.use(cookieParser('script-refresh-secret-key'));
 
     await app.listen(PORT, () => console.log(`server start on PORT ${PORT}`));
   } catch (e) {

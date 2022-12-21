@@ -13,12 +13,6 @@ export class User {
 
   @Prop({ required: true, unique: true })
   email: string;
-
-  @Prop({ required: true })
-  role: string;
-
-  @Prop()
-  refreshToken: string;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

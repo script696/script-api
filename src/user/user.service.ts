@@ -6,13 +6,7 @@ import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class UserService {
-  constructor(
-    @InjectModel(User.name) private userModel: Model<UserDocument>, // private jwtService: JwtService, // private configService: ConfigService,
-  ) {}
-  async updateUser(id, data) {
-    await this.userModel.findByIdAndUpdate(id, data);
-  }
-
+  constructor(@InjectModel(User.name) private userModel: Model<UserDocument>) {}
   async getAllUsers() {
     const allUsers = await this.userModel.find();
     return allUsers;
@@ -32,43 +26,13 @@ export class UserService {
 
     const hashPassword = await bcrypt.hash(password, 5);
 
-    await this.userModel.create({
+    const user = await this.userModel.create({
       username,
       email,
       password: hashPassword,
       role,
     });
 
-    return { username, email };
+    return { ...user, id: user._id };
   }
-
-  // async getTokens(userId: string, username: string) {
-  //   const [accessToken, refreshToken] = await Promise.all([
-  //     this.jwtService.signAsync(
-  //       {
-  //         sub: userId,
-  //         username,
-  //       },
-  //       {
-  //         secret: 'ACCESS_SECRET',
-  //         expiresIn: '15m',
-  //       },
-  //     ),
-  //     this.jwtService.signAsync(
-  //       {
-  //         sub: userId,
-  //         username,
-  //       },
-  //       {
-  //         secret: 'REFRESH_SERVICE',
-  //         expiresIn: '7d',
-  //       },
-  //     ),
-  //   ]);
-  //
-  //   return {
-  //     accessToken,
-  //     refreshToken,
-  //   };
-  // }
 }
