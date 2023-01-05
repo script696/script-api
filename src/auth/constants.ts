@@ -1,5 +1,5 @@
 const REFRESH_TOKEN = 'refreshToken';
-const REFRESH_TOKEN_EXPIRES_TIME = 7 * 24 * 60 * 60;
+const REFRESH_TOKEN_EXPIRES_TIME = 24 * 60 * 60 * 15 * 1000;
 
 const COOKIE_CONFIG = {
   maxAge: REFRESH_TOKEN_EXPIRES_TIME,

@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
+import { GetTokensParams, GetTokensResponse } from './types/token.typedef';
 
 const jwt = require('jsonwebtoken');
 
@@ -7,7 +8,7 @@ const jwt = require('jsonwebtoken');
 export class TokenService {
   constructor(private jwtService: JwtService) {}
 
-  async getTokens(payload: { email: string; sub: string }) {
+  async getTokens(payload: GetTokensParams): Promise<GetTokensResponse> {
     const [accessToken, refreshToken] = await Promise.all([
       this.jwtService.signAsync(payload, {
         secret: process.env.JWT_ACCESS_SECRET,
