@@ -5,7 +5,7 @@ import { Track, TrackDocument } from './schemas/track.schema';
 import { Comment, CommentDocument } from './schemas/comments.schema';
 import { CreateTrackDto } from './dto/create-track.dto';
 import { CreateCommentDto } from './dto/create-comment.dto';
-import { FileService, FileType } from '../file/file.service';
+import { FileService } from '../file/file.service';
 
 @Injectable()
 export class TrackService {
@@ -15,17 +15,17 @@ export class TrackService {
     private fileService: FileService,
   ) {}
 
-  async create(dto: CreateTrackDto, picture, audio): Promise<Track> {
-    const audioPath = this.fileService.createFile(FileType.AUDIO, audio);
-    const picturePath = this.fileService.createFile(FileType.IMAGE, picture);
+  async create(dto: CreateTrackDto, picture, audio): Promise<string> {
+    // const audioPath = this.fileService.createFile(FileType.AUDIO, audio);
+    // const picturePath = this.fileService.createFile(FileType.IMAGE, picture);
 
-    const track = await this.trackModel.create({
-      ...dto,
-      listeners: 0,
-      audio: audioPath,
-      picture: picturePath,
-    });
-    return track;
+    // const track = await this.trackModel.create({
+    //   ...dto,
+    //   listeners: 0,
+    //   audio: audioPath,
+    //   picture: picturePath,
+    // });
+    return 'track';
   }
 
   async getAll(): Promise<Array<Track>> {
