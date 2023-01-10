@@ -2,17 +2,19 @@ import {
   Body,
   Controller,
   Get,
+  ParseFilePipeBuilder,
   Put,
   Req,
   Request,
-  UploadedFiles,
+  UploadedFile,
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 // import { Request } from 'express';
 import { AccessTokenGuard } from '../guards/accessToken.guard';
-import { FileFieldsInterceptor } from '@nestjs/platform-express';
+import { UpdateUserDto } from './dto/updateUserDto';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 @Controller('/users')
 export class UserController {
@@ -33,10 +35,21 @@ export class UserController {
 
   @UseGuards(AccessTokenGuard)
   @Put('/updateUser')
-  @UseInterceptors(FileFieldsInterceptor([{ name: 'avatar', maxCount: 1 }]))
-  async updateUser(@UploadedFiles() files, @Body() body: any, @Request() req) {
+  @UseInterceptors(FileInterceptor('avatar'))
+  async updateUser(
+    @Body() body: UpdateUserDto,
+    @Request() req,
+    @UploadedFile(
+      new ParseFilePipeBuilder()
+        .addFileTypeValidator({
+          fileType: 'jpeg',
+        })
+        .build({ fileIsRequired: false }),
+    )
+    file: Express.Multer.File,
+  ) {
     const id = req.user.sub;
-    const avatar = files?.avatar ? files?.avatar[0] : null;
-    return await this.userService.updateUser(id, body, avatar);
+
+    return await this.userService.updateUser(id, body, file);
   }
 }

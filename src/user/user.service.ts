@@ -1,10 +1,12 @@
-import { Injectable } from '@nestjs/common';
+import { ConflictException, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { User, UserDocument } from './schemas/user.schema';
 import * as bcrypt from 'bcrypt';
-import { RegistrationParams, RegistrationResponse } from './types/user.typedef';
+import { RegistrationResponse } from './types/user.typedef';
 import { FileService } from '../file/file.service';
+import { RegistrationDto } from '../auth/dto/RegistrationDto';
+import { UpdateUserDto } from './dto/updateUserDto';
 
 @Injectable()
 export class UserService {
@@ -30,13 +32,14 @@ export class UserService {
     return { username, email, role, about, avatar };
   }
 
-  async updateUser(id, userData, picture) {
+  async updateUser(id: string, userData: UpdateUserDto, picture) {
+    console.log(picture);
     const staticPath = `users/${id}/avatar`;
     const user = await this.userModel.findById(id);
 
     /**
      * Определяем url путь аватара
-     * - если при обновлении профиля было изменение аватара - picture !== null => удаляем старую пикчу и обвновляем путь
+     * если при обновлении профиля было изменение аватара - picture !== null => удаляем старую пикчу и обвновляем путь
      * в бд
      */
     if (picture) {
@@ -53,7 +56,7 @@ export class UserService {
     user.about = userData.about;
     user.role = userData.role;
 
-    user.save();
+    await user.save();
     return user;
   }
 
@@ -62,10 +65,13 @@ export class UserService {
     email,
     password,
     role,
-  }: RegistrationParams): Promise<RegistrationResponse> {
+  }: RegistrationDto): Promise<RegistrationResponse> {
     const candidate = await this.userModel.findOne({ email });
     if (candidate) {
-      throw new Error(`Пользователь с таким ${email} уже существует`);
+      throw new ConflictException(
+        [`User with email ${email} is already exist`],
+        'Conflict Error',
+      );
     }
 
     const hashPassword = await bcrypt.hash(password, 5);

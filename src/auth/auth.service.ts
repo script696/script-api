@@ -24,7 +24,11 @@ export class AuthService {
     password: string,
   ): Promise<ValidateUserResponse> {
     const user = await this.userService.getUserByEmail(email);
-    const isPasswordsEqual = await bcrypt.compare(password, user.password);
+    const isPasswordsEqual = await bcrypt.compare(
+      password,
+      user?.password ?? '',
+    );
+
     if (user && isPasswordsEqual) {
       const { username, email, _id } = user;
       return { username, email, id: _id };
