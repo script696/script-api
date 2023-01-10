@@ -69,8 +69,9 @@ export class AuthController {
     return { accessToken };
   }
 
-  @Get('/signout')
-  logout(@Res({ passthrough: true }) response: Response): void {
+  @Post('/sign-out')
+  logout(@Res({ passthrough: true }) response: Response): { message: string } {
     response.clearCookie(REFRESH_TOKEN);
+    return { message: 'Success logout' };
   }
 }
