@@ -32,10 +32,22 @@ export class UserService {
     return { username, email, role, about, avatar };
   }
 
+  async checkUserExist(email) {
+    const candidate = await this.userModel.findOne({ email });
+    if (candidate) {
+      throw new ConflictException(
+        [`User with email ${email} is already exist`],
+        'Conflict Error',
+      );
+    }
+    return candidate;
+  }
+
   async updateUser(id: string, userData: UpdateUserDto, picture) {
-    console.log(picture);
     const staticPath = `users/${id}/avatar`;
     const user = await this.userModel.findById(id);
+
+    await this.checkUserExist(user.email);
 
     /**
      * Определяем url путь аватара
@@ -66,13 +78,14 @@ export class UserService {
     password,
     role,
   }: RegistrationDto): Promise<RegistrationResponse> {
-    const candidate = await this.userModel.findOne({ email });
-    if (candidate) {
-      throw new ConflictException(
-        [`User with email ${email} is already exist`],
-        'Conflict Error',
-      );
-    }
+    // const candidate = await this.userModel.findOne({ email });
+    // if (candidate) {
+    //   throw new ConflictException(
+    //     [`User with email ${email} is already exist`],
+    //     'Conflict Error',
+    //   );
+    // }
+    await this.checkUserExist(email);
 
     const hashPassword = await bcrypt.hash(password, 5);
 
