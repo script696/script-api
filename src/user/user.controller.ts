@@ -11,7 +11,6 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { UserService } from './user.service';
-// import { Request } from 'express';
 import { AccessTokenGuard } from '../guards/accessToken.guard';
 import { UpdateUserDto } from './dto/updateUserDto';
 import { FileInterceptor } from '@nestjs/platform-express';
