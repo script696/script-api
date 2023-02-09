@@ -1,7 +1,7 @@
 export type ValidateUserResponse = {
   id: number;
   email: string;
-  username: string;
+  nickName: string;
 };
 
 export type LoginServiceParams = {

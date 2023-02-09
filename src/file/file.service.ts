@@ -29,7 +29,6 @@ export class FileService {
   }
   removeAllFilesInDir({ staticPath }: { staticPath: string }) {
     const filePath = path.resolve(__dirname, '..', 'static', staticPath);
-
     if (!fs.existsSync(filePath)) return;
 
     fs.readdir(filePath, (err, files) => {

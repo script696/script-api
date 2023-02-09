@@ -7,6 +7,8 @@ import { RegistrationResponse } from './types/user.typedef';
 import { FileService } from '../file/file.service';
 import { RegistrationDto } from '../auth/dto/RegistrationDto';
 import { UpdateUserDto } from './dto/updateUserDto';
+import { UpdateBasicAdminInfoDto } from './dto/UpdateBasicAdminInfoDto';
+import { UpdateAddressAdminInfoDto } from './dto/UpdateAddressAdminInfoDto';
 
 @Injectable()
 export class UserService {
@@ -27,9 +29,28 @@ export class UserService {
 
   async getUserById(id: string): Promise<any> {
     const user = await this.userModel.findById(id);
-    const { username, email, role, about, avatar } = user;
-
-    return { username, email, role, about, avatar };
+    // const {
+    //   nickName,
+    //   email,
+    //   role,
+    //   avatarUrl,
+    //   fullName,
+    //   dateOfBirth,
+    //   phoneNumber,
+    // } = user;
+    return {
+      nickName: user.nickName,
+      email: user.email,
+      role: user.role,
+      avatarUrl: user.avatarUrl,
+      fullName: user.fullName,
+      dateOfBirth: user.dateOfBirth,
+      phoneNumber: user.phoneNumber,
+      country: user.country,
+      city: user.city,
+      addressLine: user.addressLine,
+      apartment: user.apartment,
+    };
   }
 
   async checkUserExist(email) {
@@ -43,12 +64,34 @@ export class UserService {
     return candidate;
   }
 
-  async updateUser(id: string, userData: UpdateUserDto, picture) {
-    const staticPath = `users/${id}/avatar`;
+  async updateUser(id: string, userData: UpdateUserDto) {
+    const user = await this.userModel.findById(id);
+    if (!user) return;
+
+    return 'user';
+  }
+
+  async updateBasicInfo(id: string, data: UpdateBasicAdminInfoDto) {
+    const admin = await this.userModel.findByIdAndUpdate(id, data, {
+      new: true,
+    });
+    const { fullName, nickName, phoneNumber, dateOfBirth } = admin;
+    return { fullName, nickName, phoneNumber, dateOfBirth };
+  }
+
+  async updateAddressInfo(id: string, data: UpdateAddressAdminInfoDto) {
+    const admin = await this.userModel.findByIdAndUpdate(id, data, {
+      new: true,
+    });
+    const { country, city, addressLine, apartment } = admin;
+    return { country, city, addressLine, apartment };
+  }
+
+  async updateUserAvatar(id: string, picture) {
+    const staticPath = `admin/${id}/avatar`;
     const user = await this.userModel.findById(id);
 
-    await this.checkUserExist(user.email);
-
+    // await this.checkUserExist(user.email);
     /**
      * Определяем url путь аватара
      * если при обновлении профиля было изменение аватара - picture !== null => удаляем старую пикчу и обвновляем путь
@@ -57,45 +100,39 @@ export class UserService {
     if (picture) {
       this.fileService.removeAllFilesInDir({ staticPath });
 
-      user.avatar = this.fileService.createFile({
+      user.avatarUrl = this.fileService.createFile({
         staticPath,
         file: picture,
       });
     }
 
-    user.username = userData.username;
-    user.email = userData.email;
-    user.about = userData.about;
-    user.role = userData.role;
-
     await user.save();
-    return user;
+    return { avatarUrl: user.avatarUrl };
   }
 
   async register({
-    username,
+    nickName,
     email,
     password,
     role,
   }: RegistrationDto): Promise<RegistrationResponse> {
-    // const candidate = await this.userModel.findOne({ email });
-    // if (candidate) {
-    //   throw new ConflictException(
-    //     [`User with email ${email} is already exist`],
-    //     'Conflict Error',
-    //   );
-    // }
     await this.checkUserExist(email);
 
     const hashPassword = await bcrypt.hash(password, 5);
 
     const user = await this.userModel.create({
-      username,
+      nickName,
       email,
       password: hashPassword,
       role,
     });
 
     return { email: user.email, id: user._id };
+  }
+
+  async changePassword({ id, password }: any): Promise<any> {
+    const hashPassword = await bcrypt.hash(password, 5);
+    await this.userModel.findByIdAndUpdate(id, { password: hashPassword });
+    return { message: 'Password successfully changed' };
   }
 }

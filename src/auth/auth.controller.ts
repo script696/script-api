@@ -3,6 +3,7 @@ import {
   Controller,
   Get,
   Post,
+  Put,
   Request,
   Res,
   UseGuards,
@@ -73,5 +74,16 @@ export class AuthController {
   logout(@Res({ passthrough: true }) response: Response): { message: string } {
     response.clearCookie(REFRESH_TOKEN);
     return { message: 'Success logout' };
+  }
+
+  @UseGuards(LocalAuthGuard)
+  @Put('/changePassword')
+  async changePassword(@Request() req, @Body() body: any) {
+    const res = await this.userService.changePassword({
+      id: req.user.id,
+      password: body.newPassword,
+    });
+
+    return res;
   }
 }

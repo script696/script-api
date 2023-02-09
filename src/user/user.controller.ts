@@ -14,8 +14,10 @@ import { UserService } from './user.service';
 import { AccessTokenGuard } from '../guards/accessToken.guard';
 import { UpdateUserDto } from './dto/updateUserDto';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { UpdateBasicAdminInfoDto } from './dto/UpdateBasicAdminInfoDto';
+import { UpdateAddressAdminInfoDto } from './dto/UpdateAddressAdminInfoDto';
 
-@Controller('/users')
+@Controller('/admin')
 export class UserController {
   constructor(private userService: UserService) {}
 
@@ -49,6 +51,45 @@ export class UserController {
   ) {
     const id = req.user.sub;
 
-    return await this.userService.updateUser(id, body, file);
+    return await this.userService.updateUser(id, body);
+  }
+
+  @UseGuards(AccessTokenGuard)
+  @Put('/updateBasicInfo')
+  async updateBasicInfo(@Body() body: UpdateBasicAdminInfoDto, @Request() req) {
+    const id = req.user.sub;
+
+    return await this.userService.updateBasicInfo(id, body);
+  }
+
+  @UseGuards(AccessTokenGuard)
+  @Put('/updateAddressInfo')
+  async updateAddressInfo(
+    @Body() body: UpdateAddressAdminInfoDto,
+    @Request() req,
+  ) {
+    const id = req.user.sub;
+
+    return await this.userService.updateAddressInfo(id, body);
+  }
+
+  @UseGuards(AccessTokenGuard)
+  @Put('/updateAvatar')
+  @UseInterceptors(FileInterceptor('avatar'))
+  async updateUserAvatar(
+    @Request() req,
+    @UploadedFile(
+      new ParseFilePipeBuilder()
+        .addFileTypeValidator({
+          fileType: 'jpeg',
+        })
+        .build({ fileIsRequired: false }),
+    )
+    file: Express.Multer.File,
+  ) {
+    console.log(file);
+    const id = req.user.sub;
+
+    return await this.userService.updateUserAvatar(id, file);
   }
 }
