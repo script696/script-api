@@ -5,7 +5,7 @@ import { Match } from '../../decorators/match.decorator';
 
 export class RegistrationDto {
   @Length(5, 10)
-  username: string;
+  nickName: string;
 
   @IsEmail()
   email: string;

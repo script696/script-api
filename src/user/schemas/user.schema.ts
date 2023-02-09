@@ -6,10 +6,10 @@ export type UserDocument = User & Document;
 @Schema()
 export class User {
   @Prop({ required: true, unique: true })
-  username: string;
+  nickName: string;
 
   @Prop()
-  lastname: string;
+  fullName: string;
 
   @Prop({ required: true })
   password: string;
@@ -21,10 +21,25 @@ export class User {
   role: string;
 
   @Prop()
-  about: string;
+  dateOfBirth: string;
 
   @Prop()
-  avatar: string;
+  phoneNumber: string;
+
+  @Prop()
+  avatarUrl: string;
+
+  @Prop()
+  country: string;
+
+  @Prop()
+  city: string;
+
+  @Prop()
+  addressLine: string;
+
+  @Prop()
+  apartment: string;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

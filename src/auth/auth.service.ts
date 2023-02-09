@@ -30,8 +30,8 @@ export class AuthService {
     );
 
     if (user && isPasswordsEqual) {
-      const { username, email, _id } = user;
-      return { username, email, id: _id };
+      const { nickName, email, _id } = user;
+      return { nickName, email, id: _id };
     }
     return null;
   }
