@@ -19,7 +19,7 @@ import { RegistrationResponse } from './response/RegistrationResponse';
 import { RegistrationDto } from './dto/RegistrationDto';
 import { RefreshResponse } from './response/RefreshResponse';
 
-@Controller('/auth')
+@Controller('api/auth')
 export class AuthController {
   constructor(
     private userService: UserService,

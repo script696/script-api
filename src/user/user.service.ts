@@ -29,6 +29,7 @@ export class UserService {
 
   async getUserById(id: string): Promise<any> {
     const user = await this.userModel.findById(id);
+
     // const {
     //   nickName,
     //   email,

@@ -8,7 +8,6 @@ const start = async () => {
   try {
     const PORT = process.env.PORT;
     const app = await NestFactory.create(AppModule);
-
     app.useGlobalPipes(new ValidationPipe());
 
     app.enableCors(CORS_CONFIG);

@@ -1,5 +1,5 @@
 const CORS_CONFIG = {
-  origin: 'http://localhost:3000',
+  origin: process.env.ORIGIN,
   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
   credentials: true,
   allowedHeaders: ['Content-Type', 'Authorization', 'x-csrf-token'],

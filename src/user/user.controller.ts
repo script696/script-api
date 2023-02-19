@@ -17,7 +17,7 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { UpdateBasicAdminInfoDto } from './dto/UpdateBasicAdminInfoDto';
 import { UpdateAddressAdminInfoDto } from './dto/UpdateAddressAdminInfoDto';
 
-@Controller('/admin')
+@Controller('api/admin')
 export class UserController {
   constructor(private userService: UserService) {}
 
