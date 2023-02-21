@@ -1,6 +1,6 @@
 const CORS_CONFIG = {
   origin: process.env.ORIGIN,
-  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
   credentials: true,
   allowedHeaders: ['Content-Type', 'Authorization', 'x-csrf-token'],
 };
