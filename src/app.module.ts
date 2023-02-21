@@ -11,13 +11,13 @@ import { ConfigModule } from '@nestjs/config';
 
 @Module({
   imports: [
-    ServeStaticModule.forRoot({
-      rootPath: path.resolve(__dirname, 'static'),
-    }),
-    MongooseModule.forRoot('mongodb://localhost:27017/script-api'),
     ConfigModule.forRoot({
       isGlobal: true,
     }),
+    ServeStaticModule.forRoot({
+      rootPath: path.resolve(__dirname, 'static'),
+    }),
+    MongooseModule.forRoot(`${process.env.MONGODB_URI}/${process.env.DB_NAME}`),
     TokenModule,
     UserModule,
     TrackModule,
