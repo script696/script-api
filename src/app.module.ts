@@ -8,9 +8,17 @@ import { UserModule } from './user/user.module';
 import { TokenModule } from './tokenService/token.module';
 import { AuthModule } from './auth/auth.module';
 import { ConfigModule } from '@nestjs/config';
+import { TelegrafModule } from 'nestjs-telegraf';
+import { TelegramModule } from './telegram/telegram.module';
+import { ProductModule } from './product/product.module';
+
+const TOKEN = '6043745392:AAE_kFGPjvb8d5szU6zaz70QF9gkTuoctSw';
 
 @Module({
   imports: [
+    TelegrafModule.forRoot({
+      token: TOKEN,
+    }),
     ConfigModule.forRoot({
       isGlobal: true,
     }),
@@ -23,6 +31,8 @@ import { ConfigModule } from '@nestjs/config';
     TrackModule,
     FileModule,
     AuthModule,
+    TelegramModule,
+    ProductModule,
   ],
 })
 export class AppModule {}

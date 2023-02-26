@@ -80,7 +80,7 @@ export class UserService {
   }
 
   async updateUserAvatar(id: string, picture) {
-    const staticPath = `admin/${id}/avatar`;
+    const staticPath = `api/admin/${id}/avatar`;
     const user = await this.userModel.findById(id);
 
     // await this.checkUserExist(user.email);
