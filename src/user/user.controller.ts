@@ -87,7 +87,6 @@ export class UserController {
     )
     file: Express.Multer.File,
   ) {
-    console.log(file);
     const id = req.user.sub;
 
     return await this.userService.updateUserAvatar(id, file);
