@@ -7,11 +7,13 @@ import { UpdateProductDescriptionDto } from './dto/UpdateProductDescriptionDto';
 import { UpdateServiceInfoDto } from './dto/UpdateServiceInfoDto';
 import { UpdatePublicInfoDto } from './dto/UpdatePublicInfoDto';
 import { DeleteProductDto } from './dto/DeleteProductDto';
+import { FileService } from '../file/file.service';
 
 @Injectable()
 export class ProductService {
   constructor(
     @InjectModel(Product.name) private ProductModel: Model<ProductDocument>,
+    private fileService: FileService,
   ) {}
   async getAllProducts() {
     const allProducts = await this.ProductModel.find();
@@ -22,7 +24,7 @@ export class ProductService {
         description,
         discount,
         totalSold,
-        url,
+        pictures,
         price,
         amount,
       }) => ({
@@ -31,7 +33,7 @@ export class ProductService {
         description,
         discount,
         totalSold,
-        url,
+        pictures,
         price,
         amount,
       }),
@@ -44,7 +46,7 @@ export class ProductService {
       description,
       discount,
       totalSold,
-      url,
+      pictures,
       price,
       amount,
     } = await this.ProductModel.create(productData);
@@ -54,7 +56,7 @@ export class ProductService {
       description,
       discount,
       totalSold,
-      url,
+      pictures,
       price,
       amount,
     };
@@ -92,7 +94,7 @@ export class ProductService {
   }
 
   async deleteProduct({ id }: DeleteProductDto) {
-    const product = await this.ProductModel.findByIdAndDelete(id);
+    await this.ProductModel.findByIdAndDelete(id);
 
     return {
       id,
@@ -111,5 +113,24 @@ export class ProductService {
       price: product.price,
       discount: product.discount,
     };
+  }
+
+  async addPicture(userId: string, productId: string, picture) {
+    const staticPath = `api/admin/${userId}/product/${productId}`;
+
+    const newPictureUrl = this.fileService.createFile({
+      staticPath,
+      file: picture,
+    });
+
+    const product = await this.ProductModel.findByIdAndUpdate(
+      productId,
+      {
+        $push: { pictures: newPictureUrl },
+      },
+      { new: true },
+    );
+
+    return { pictureUrl: product.pictures.at(-1), productId };
   }
 }

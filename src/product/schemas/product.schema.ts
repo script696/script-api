@@ -24,7 +24,7 @@ export class Product {
   description: string;
 
   @Prop()
-  url: string;
+  pictures: Array<string>;
 }
 
 export const ProductSchema = SchemaFactory.createForClass(Product);
