@@ -4,6 +4,7 @@ import { Product, ProductSchema } from './schemas/product.schema';
 import { AuthModule } from '../auth/auth.module';
 import { ProductService } from './product.service';
 import { ProductController } from './product.controller';
+import { FileService } from '../file/file.service';
 
 @Module({
   imports: [
@@ -11,7 +12,7 @@ import { ProductController } from './product.controller';
     forwardRef(() => AuthModule),
   ],
   controllers: [ProductController],
-  providers: [ProductService],
+  providers: [ProductService, FileService],
   exports: [],
 })
 export class ProductModule {}

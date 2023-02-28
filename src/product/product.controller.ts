@@ -1,10 +1,26 @@
-import { Body, Controller, Get, Post, Put, Req, Request } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  ParseFilePipeBuilder,
+  Post,
+  Put,
+  Req,
+  Request,
+  UploadedFile,
+  UseGuards,
+  UseInterceptors,
+} from '@nestjs/common';
 import { ProductService } from './product.service';
 import { CreateProductDto } from './dto/CreateProductDto';
 import { UpdateProductDescriptionDto } from './dto/UpdateProductDescriptionDto';
 import { UpdateServiceInfoDto } from './dto/UpdateServiceInfoDto';
 import { UpdatePublicInfoDto } from './dto/UpdatePublicInfoDto';
 import { DeleteProductDto } from './dto/DeleteProductDto';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { AddPictureDto } from './dto/AddPictureDto';
+import { AccessTokenGuard } from '../guards/accessToken.guard';
+import { DeleteProductPictureDto } from './dto/DeleteProductPictureDto';
 
 @Controller('api/product')
 export class ProductController {
@@ -35,8 +51,41 @@ export class ProductController {
     return await this.productService.updatePublicInfo(body);
   }
 
-  @Post('/delete')
-  async deleteProduct(@Body() body: DeleteProductDto) {
-    return await this.productService.deleteProduct(body);
+  @UseGuards(AccessTokenGuard)
+  @Post('/deleteProduct')
+  async deleteProduct(@Request() req, @Body() body: DeleteProductDto) {
+    const { id: productId } = body;
+    const userId = req.user.sub;
+    return await this.productService.deleteProduct(userId, productId);
+  }
+
+  @UseGuards(AccessTokenGuard)
+  @Post('/addPicture')
+  @UseInterceptors(FileInterceptor('picture'))
+  async addPicture(
+    @Request() req,
+    @Body() body: AddPictureDto,
+    @UploadedFile(
+      new ParseFilePipeBuilder()
+        .addFileTypeValidator({
+          fileType: 'jpeg',
+        })
+        .build({ fileIsRequired: false }),
+    )
+    file: Express.Multer.File,
+  ) {
+    const userId = req.user.sub;
+    const { productId } = body;
+
+    return await this.productService.addPicture(userId, productId, file);
+  }
+
+  @UseGuards(AccessTokenGuard)
+  @Post('/removeProductPicture')
+  async deleteProductPicture(
+    @Request() req,
+    @Body() body: DeleteProductPictureDto,
+  ) {
+    return await this.productService.deleteProductPicture(body);
   }
 }

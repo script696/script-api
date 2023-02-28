@@ -40,4 +40,18 @@ export class FileService {
       }
     });
   }
+
+  removeDir({ staticPath }: { staticPath: string }) {
+    const filePath = path.resolve(__dirname, '..', 'static', staticPath);
+    if (!fs.existsSync(filePath)) return;
+    fs.rmSync(filePath, { recursive: true, force: true });
+  }
+
+  removeFile(picturePath: string) {
+    const filePath = path.resolve(__dirname, '..', 'static', picturePath);
+
+    fs.unlink(filePath, (err) => {
+      if (err) throw err;
+    });
+  }
 }
