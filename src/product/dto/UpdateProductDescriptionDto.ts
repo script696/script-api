@@ -4,9 +4,11 @@ export class UpdateProductDescriptionDto {
   @IsMongoId()
   id: number;
 
-  @Length(5, 20)
+  @IsString()
+  @Length(5, 15)
   title: string;
 
   @IsString()
+  @Length(40, 400)
   description: string;
 }

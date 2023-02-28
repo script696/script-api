@@ -20,6 +20,7 @@ import { DeleteProductDto } from './dto/DeleteProductDto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { AddPictureDto } from './dto/AddPictureDto';
 import { AccessTokenGuard } from '../guards/accessToken.guard';
+import { DeleteProductPictureDto } from './dto/DeleteProductPictureDto';
 
 @Controller('api/product')
 export class ProductController {
@@ -50,9 +51,12 @@ export class ProductController {
     return await this.productService.updatePublicInfo(body);
   }
 
-  @Post('/delete')
-  async deleteProduct(@Body() body: DeleteProductDto) {
-    return await this.productService.deleteProduct(body);
+  @UseGuards(AccessTokenGuard)
+  @Post('/deleteProduct')
+  async deleteProduct(@Request() req, @Body() body: DeleteProductDto) {
+    const { id: productId } = body;
+    const userId = req.user.sub;
+    return await this.productService.deleteProduct(userId, productId);
   }
 
   @UseGuards(AccessTokenGuard)
@@ -72,7 +76,16 @@ export class ProductController {
   ) {
     const userId = req.user.sub;
     const { productId } = body;
-    console.log(userId, productId, file);
+
     return await this.productService.addPicture(userId, productId, file);
+  }
+
+  @UseGuards(AccessTokenGuard)
+  @Post('/removeProductPicture')
+  async deleteProductPicture(
+    @Request() req,
+    @Body() body: DeleteProductPictureDto,
+  ) {
+    return await this.productService.deleteProductPicture(body);
   }
 }

@@ -6,8 +6,8 @@ import { CreateProductDto } from './dto/CreateProductDto';
 import { UpdateProductDescriptionDto } from './dto/UpdateProductDescriptionDto';
 import { UpdateServiceInfoDto } from './dto/UpdateServiceInfoDto';
 import { UpdatePublicInfoDto } from './dto/UpdatePublicInfoDto';
-import { DeleteProductDto } from './dto/DeleteProductDto';
 import { FileService } from '../file/file.service';
+import { DeleteProductPictureDto } from './dto/DeleteProductPictureDto';
 
 @Injectable()
 export class ProductService {
@@ -93,11 +93,14 @@ export class ProductService {
     };
   }
 
-  async deleteProduct({ id }: DeleteProductDto) {
-    await this.ProductModel.findByIdAndDelete(id);
+  async deleteProduct(userId: string, productId: number) {
+    const staticPath = `api/admin/${userId}/product/${productId}`;
+
+    await this.ProductModel.findByIdAndDelete(productId);
+    this.fileService.removeDir({ staticPath });
 
     return {
-      id,
+      id: productId,
       message: 'success',
     };
   }
@@ -132,5 +135,20 @@ export class ProductService {
     );
 
     return { pictureUrl: product.pictures.at(-1), productId };
+  }
+
+  async deleteProductPicture({
+    pictureUrl,
+    productId,
+  }: DeleteProductPictureDto) {
+    const product = await this.ProductModel.findById(productId);
+    const updatedPictures = product.pictures.filter(
+      (picture) => picture !== pictureUrl,
+    );
+    product.pictures = updatedPictures;
+    await product.save();
+    await this.fileService.removeFile(pictureUrl);
+
+    return { pictureUrl };
   }
 }
