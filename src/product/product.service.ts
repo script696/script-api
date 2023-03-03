@@ -15,8 +15,9 @@ export class ProductService {
     @InjectModel(Product.name) private ProductModel: Model<ProductDocument>,
     private fileService: FileService,
   ) {}
-  async getAllProducts() {
-    const allProducts = await this.ProductModel.find();
+  async getAllProducts(userId: string) {
+    console.log(userId);
+    const allProducts = await this.ProductModel.find({ owner: userId });
     return allProducts.map(
       ({
         _id,
@@ -27,6 +28,7 @@ export class ProductService {
         pictures,
         price,
         amount,
+        owner,
       }) => ({
         id: _id,
         title,
@@ -36,10 +38,11 @@ export class ProductService {
         pictures,
         price,
         amount,
+        owner,
       }),
     );
   }
-  async createProduct(productData: CreateProductDto) {
+  async createProduct(productData: CreateProductDto & { owner: string }) {
     const {
       _id: id,
       title,
@@ -49,6 +52,7 @@ export class ProductService {
       pictures,
       price,
       amount,
+      owner,
     } = await this.ProductModel.create(productData);
     return {
       id,
@@ -59,6 +63,7 @@ export class ProductService {
       pictures,
       price,
       amount,
+      owner,
     };
   }
   async updateDescription({

@@ -21,19 +21,26 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { AddPictureDto } from './dto/AddPictureDto';
 import { AccessTokenGuard } from '../guards/accessToken.guard';
 import { DeleteProductPictureDto } from './dto/DeleteProductPictureDto';
+import { Request as ExpressRequest } from 'express';
 
 @Controller('api/product')
 export class ProductController {
   constructor(private productService: ProductService) {}
 
   @Get('/getAll')
-  async getAllProducts(@Req() request: Request) {
-    return await this.productService.getAllProducts();
+  async getAllProducts(@Req() request: ExpressRequest) {
+    if (typeof request.query.userId !== 'string') {
+      throw new Error('Test Error');
+    }
+    return await this.productService.getAllProducts(request.query.userId);
   }
 
+  @UseGuards(AccessTokenGuard)
   @Post('/create')
-  async createProduct(@Body() body: CreateProductDto) {
-    return await this.productService.createProduct(body);
+  async createProduct(@Body() body: CreateProductDto, @Request() req) {
+    const owner = req.user.sub;
+
+    return await this.productService.createProduct({ ...body, owner });
   }
 
   @Put('/updateDescription')

@@ -37,7 +37,7 @@ export class AuthController {
 
     response.cookie(REFRESH_TOKEN, refreshToken, COOKIE_CONFIG);
 
-    return { accessToken };
+    return { accessToken, userId: user.id };
   }
 
   @UseGuards(LocalAuthGuard)
@@ -52,7 +52,7 @@ export class AuthController {
 
     response.cookie(REFRESH_TOKEN, refreshToken, COOKIE_CONFIG);
 
-    return { accessToken };
+    return { accessToken, userId: req.user.id };
   }
 
   @UseGuards(RefreshTokenGuard)
