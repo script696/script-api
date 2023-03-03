@@ -67,7 +67,7 @@ export class AuthController {
 
     response.cookie(REFRESH_TOKEN, refreshToken, COOKIE_CONFIG);
 
-    return { accessToken };
+    return { accessToken, userId: req.user.sub };
   }
 
   @Post('/sign-out')

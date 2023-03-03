@@ -14,7 +14,6 @@ export class AppUpdate {
 
   @Start()
   async startCommand(ctx: Context) {
-    console.log(this.appUrl);
     await ctx.reply('One', actionButtons(this.appUrl));
   }
 }

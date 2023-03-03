@@ -30,7 +30,8 @@ export class ProductController {
   @Get('/getAll')
   async getAllProducts(@Req() request: ExpressRequest) {
     if (typeof request.query.userId !== 'string') {
-      throw new Error('Test Error');
+      // throw new Error('Test Error');
+      return [];
     }
     return await this.productService.getAllProducts(request.query.userId);
   }

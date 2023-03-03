@@ -16,7 +16,6 @@ export class ProductService {
     private fileService: FileService,
   ) {}
   async getAllProducts(userId: string) {
-    console.log(userId);
     const allProducts = await this.ProductModel.find({ owner: userId });
     return allProducts.map(
       ({
