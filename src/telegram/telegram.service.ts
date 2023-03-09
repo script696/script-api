@@ -11,9 +11,11 @@ export class AppUpdate {
   ) {}
 
   appUrl = this.configService.get('TELEGRAM_URL');
+  userId = this.configService.get('USER_ID');
 
   @Start()
   async startCommand(ctx: Context) {
-    await ctx.reply('One', actionButtons(this.appUrl));
+    const appUrl = `${this.appUrl}?userId=${this.userId}`;
+    await ctx.reply('One', actionButtons(appUrl));
   }
 }
