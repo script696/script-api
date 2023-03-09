@@ -1,7 +1,7 @@
 import { IsNumber, IsString, Length, Max, Min } from 'class-validator';
 
 export class CreateProductDto {
-  @Length(5, 20)
+  @Length(5, 40)
   title: string;
 
   @IsNumber()
