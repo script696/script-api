@@ -5,7 +5,7 @@ export class UpdateProductDescriptionDto {
   id: number;
 
   @IsString()
-  @Length(5, 15)
+  @Length(5, 35)
   title: string;
 
   @IsString()
