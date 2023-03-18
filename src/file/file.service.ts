@@ -49,6 +49,7 @@ export class FileService {
 
   removeFile(picturePath: string) {
     const filePath = path.resolve(__dirname, '..', 'static', picturePath);
+    if (!fs.existsSync(filePath)) return;
 
     fs.unlink(filePath, (err) => {
       if (err) throw err;

@@ -7,7 +7,7 @@ import { ServeStaticModule } from '@nestjs/serve-static';
 import { UserModule } from './user/user.module';
 import { TokenModule } from './tokenService/token.module';
 import { AuthModule } from './auth/auth.module';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TelegrafModule } from 'nestjs-telegraf';
 import { TelegramModule } from './telegram/telegram.module';
 import { ProductModule } from './product/product.module';
@@ -17,8 +17,15 @@ import { ProductModule } from './product/product.module';
     ConfigModule.forRoot({
       isGlobal: true,
     }),
-    TelegrafModule.forRoot({
-      token: process.env.BOT_TOKEN,
+    TelegrafModule.forRootAsync({
+      imports: [ConfigModule],
+      botName: 'cat',
+      useFactory: (configService: ConfigService) => {
+        return {
+          token: configService.get<string>('BOT_TOKEN'),
+        };
+      },
+      inject: [ConfigService],
     }),
     ServeStaticModule.forRoot({
       rootPath: path.resolve(__dirname, 'static'),

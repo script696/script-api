@@ -5,7 +5,7 @@ import {
   ParseFilePipeBuilder,
   Post,
   Put,
-  Req,
+  Query,
   Request,
   UploadedFile,
   UseGuards,
@@ -21,19 +21,18 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { AddPictureDto } from './dto/AddPictureDto';
 import { AccessTokenGuard } from '../guards/accessToken.guard';
 import { DeleteProductPictureDto } from './dto/DeleteProductPictureDto';
-import { Request as ExpressRequest } from 'express';
 
 @Controller('api/product')
 export class ProductController {
   constructor(private productService: ProductService) {}
 
   @Get('/getAll')
-  async getAllProducts(@Req() request: ExpressRequest) {
-    if (typeof request.query.userId !== 'string') {
+  async getAllProducts(@Query('userId') userId: string) {
+    if (typeof userId !== 'string' || !userId) {
       // throw new Error('Test Error');
       return [];
     }
-    return await this.productService.getAllProducts(request.query.userId);
+    return await this.productService.getAllProducts(userId);
   }
 
   @UseGuards(AccessTokenGuard)
